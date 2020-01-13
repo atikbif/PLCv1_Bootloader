@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */     
 
 #include "rs485.h"
+#include "eeprom.h"
 
 /* USER CODE END Includes */
 
@@ -48,6 +49,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+
+extern uint8_t jump_flag;
+extern uint16_t VirtAddVarTab[NB_OF_VAR];
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
@@ -128,14 +132,13 @@ void StartDefaultTask(void const * argument)
   MX_LWIP_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
-  uint16_t led_tmr=0;
   for(;;)
   {
-	  uart1_scan();
-	  uart2_scan();
-	  led_tmr++;if(led_tmr>=100) {
-		  led_tmr = 0;
-		  HAL_GPIO_TogglePin(LED_G_GPIO_Port,LED_G_Pin);
+	  if(jump_flag) {
+		  osDelay(100);
+		  EE_WriteVariable(VirtAddVarTab[1],1);
+		  osDelay(10);
+		  NVIC_SystemReset();
 	  }
 	  osDelay(1);
   }

@@ -31,6 +31,7 @@
 
 #include "rs485.h"
 #include "eeprom.h"
+#include "flash_interface.h"
 
 /* USER CODE END Includes */
 
@@ -63,7 +64,7 @@ extern uint16_t rx2_cnt;
 extern uint16_t rx2_tmr;
 extern uint8_t dir2_tmr;
 
-uint16_t VirtAddVarTab[NB_OF_VAR]={1,2,3};
+uint16_t VirtAddVarTab[NB_OF_VAR]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
 
 /* USER CODE END PV */
 
@@ -106,7 +107,23 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
 
+  //start_application();
 
+  HAL_Delay(100);
+  HAL_FLASH_Unlock();
+  EE_Init();
+  EE_ReadVariable(VirtAddVarTab[0],  &ee_key);
+  if(ee_key!=EEPROM_KEY_VALUE) {
+ 	  EE_WriteVariable(VirtAddVarTab[0],EEPROM_KEY_VALUE);
+ 	  EE_WriteVariable(VirtAddVarTab[1],0); // start program cmd (0-init,1-bootloader finished, 2-correct program)
+  }
+  EE_ReadVariable(VirtAddVarTab[1],  &ee_key);
+  if(ee_key==1) {
+ 	  EE_WriteVariable(VirtAddVarTab[1],0);
+ 	  start_application();
+  }else if(ee_key==2) {
+ 	  start_application();
+  }
 
   /* USER CODE END SysInit */
 
@@ -117,12 +134,7 @@ int main(void)
   MX_DMA_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_FLASH_Unlock();
-  EE_Init();
-  EE_ReadVariable(VirtAddVarTab[0],  &ee_key);
-  if(ee_key!=EEPROM_KEY_VALUE) {
-	  EE_WriteVariable(VirtAddVarTab[0],EEPROM_KEY_VALUE);
-  }
+
 
   LL_DMA_EnableIT_TC(DMA1, LL_DMA_STREAM_6);
   LL_DMA_EnableIT_TE(DMA1, LL_DMA_STREAM_6);
@@ -219,6 +231,7 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
+  static uint16_t led_tmr=0;
 
   if(rx1_cnt) {rx1_tmr++;}else rx1_tmr=0;
   if(dir1_tmr) {
@@ -238,6 +251,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	  }
   }
 
+  uart1_scan();
+  uart2_scan();
+  led_tmr++;if(led_tmr>=100) {
+	  led_tmr = 0;
+	  HAL_GPIO_TogglePin(LED_G_GPIO_Port,LED_G_Pin);
+  }
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM1) {
     HAL_IncTick();
