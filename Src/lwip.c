@@ -27,6 +27,10 @@
 
 /* USER CODE BEGIN 0 */
 
+extern int8_t ip_addr[4];
+extern uint8_t ip_mask[4];
+extern uint8_t ip_gate[4];
+
 /* USER CODE END 0 */
 /* Private function prototypes -----------------------------------------------*/
 /* ETH Variables initialization ----------------------------------------------*/
@@ -68,6 +72,12 @@ void MX_LWIP_Init(void)
   GATEWAY_ADDRESS[2] = 5;
   GATEWAY_ADDRESS[3] = 1;
   
+  for(uint8_t i=0;i<4;i++) {
+	  IP_ADDRESS[i] = ip_addr[i];
+	  NETMASK_ADDRESS[i] = ip_mask[i];
+	  GATEWAY_ADDRESS[i] = ip_gate[i];
+  }
+
   /* Initilialize the LwIP stack with RTOS */
   tcpip_init( NULL, NULL );
 

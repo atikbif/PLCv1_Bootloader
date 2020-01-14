@@ -31,6 +31,8 @@
 /* Within 'USER CODE' section, code will be kept by default at each generation */
 /* USER CODE BEGIN 0 */
 
+extern uint8_t ip_addr[4];
+
 /* USER CODE END 0 */
 
 /* Private define ------------------------------------------------------------*/
@@ -266,6 +268,10 @@ static void low_level_init(struct netif *netif)
   heth.Init.MediaInterface = ETH_MEDIA_INTERFACE_MII;
 
   /* USER CODE BEGIN MACADDRESS */
+
+  MACAddr[3] = 0x60;
+  MACAddr[4] = ip_addr[2];
+  MACAddr[5] = ip_addr[3];
     
   /* USER CODE END MACADDRESS */
 

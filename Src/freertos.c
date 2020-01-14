@@ -29,6 +29,7 @@
 
 #include "rs485.h"
 #include "eeprom.h"
+#include "udp_server.h"
 
 /* USER CODE END Includes */
 
@@ -131,6 +132,7 @@ void StartDefaultTask(void const * argument)
   /* init code for LWIP */
   MX_LWIP_Init();
   /* USER CODE BEGIN StartDefaultTask */
+  udp_server_init();
   /* Infinite loop */
   for(;;)
   {
