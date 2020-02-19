@@ -117,7 +117,7 @@ int main(void)
 
   //start_application();
 
-  HAL_Delay(100);
+  HAL_Delay(1500);
   HAL_FLASH_Unlock();
   EE_Init();
   EE_ReadVariable(VirtAddVarTab[0],  &ee_key);
