@@ -22,6 +22,13 @@
 
 /* USER CODE BEGIN 0 */
 
+extern uint8_t baudrate1;
+extern uint8_t stop_bits1;
+extern uint8_t parity1;
+extern uint8_t baudrate2;
+extern uint8_t stop_bits2;
+extern uint8_t parity2;
+
 /* USER CODE END 0 */
 
 /* USART1 init function */
@@ -73,10 +80,36 @@ void MX_USART1_UART_Init(void)
   NVIC_SetPriority(USART1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(USART1_IRQn);
 
-  USART_InitStruct.BaudRate = 115200;
-  USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
-  USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
-  USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+  switch(baudrate1) {
+    case 0: USART_InitStruct.BaudRate = 2400;break;
+    case 1: USART_InitStruct.BaudRate = 4800;break;
+    case 2: USART_InitStruct.BaudRate = 9600;break;
+    case 3: USART_InitStruct.BaudRate = 19200;break;
+    case 4: USART_InitStruct.BaudRate = 38400;break;
+    case 5: USART_InitStruct.BaudRate = 57600;break;
+    case 6: USART_InitStruct.BaudRate = 115200;break;
+    default:USART_InitStruct.BaudRate = 9600;
+  }
+  if(stop_bits1==0) USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+  else USART_InitStruct.StopBits = LL_USART_STOPBITS_2;
+  if(parity1==0) {
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+    USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+  }else if(parity1==1) {
+    USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }else if(parity1==2) {
+    USART_InitStruct.Parity = LL_USART_PARITY_ODD;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }else {
+    USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }
+
+  //USART_InitStruct.BaudRate = 115200;
+  //USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  //USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+  //USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
   USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
   USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;
@@ -134,10 +167,36 @@ void MX_USART2_UART_Init(void)
   NVIC_SetPriority(USART2_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
   NVIC_EnableIRQ(USART2_IRQn);
 
-  USART_InitStruct.BaudRate = 115200;
-  USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
-  USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
-  USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+  switch(baudrate2) {
+  	case 0: USART_InitStruct.BaudRate = 2400;break;
+  	case 1: USART_InitStruct.BaudRate = 4800;break;
+  	case 2: USART_InitStruct.BaudRate = 9600;break;
+  	case 3: USART_InitStruct.BaudRate = 19200;break;
+  	case 4: USART_InitStruct.BaudRate = 38400;break;
+  	case 5: USART_InitStruct.BaudRate = 57600;break;
+  	case 6: USART_InitStruct.BaudRate = 115200;break;
+  	default:USART_InitStruct.BaudRate = 9600;
+  }
+  if(stop_bits2==0) USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+  else USART_InitStruct.StopBits = LL_USART_STOPBITS_2;
+  if(parity2==0) {
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_8B;
+    USART_InitStruct.Parity = LL_USART_PARITY_NONE;
+  }else if(parity2==1) {
+    USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }else if(parity2==2) {
+    USART_InitStruct.Parity = LL_USART_PARITY_ODD;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }else {
+    USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
+    USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  }
+
+  //USART_InitStruct.BaudRate = 115200;
+  //USART_InitStruct.DataWidth = LL_USART_DATAWIDTH_9B;
+  //USART_InitStruct.StopBits = LL_USART_STOPBITS_1;
+  //USART_InitStruct.Parity = LL_USART_PARITY_EVEN;
   USART_InitStruct.TransferDirection = LL_USART_DIRECTION_TX_RX;
   USART_InitStruct.HardwareFlowControl = LL_USART_HWCONTROL_NONE;
   USART_InitStruct.OverSampling = LL_USART_OVERSAMPLING_16;

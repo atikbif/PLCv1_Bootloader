@@ -58,6 +58,9 @@ extern uint16_t rx2_cnt;
 extern uint16_t rx2_tmr;
 extern uint8_t dir2_tmr;
 
+extern uint8_t baud_dir1;
+extern uint8_t baud_dir2;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -186,7 +189,7 @@ void DMA1_Stream6_IRQHandler(void)
 		LL_DMA_ClearFlag_TC6(DMA1);
 		/* Call function Transmission complete Callback */
 		LL_DMA_DisableStream(DMA1, LL_DMA_STREAM_6);
-		dir2_tmr = 2;
+		dir2_tmr = baud_dir2;
 	}
 	if(LL_DMA_IsActiveFlag_TE6(DMA1))
 	{
@@ -282,7 +285,7 @@ void DMA2_Stream7_IRQHandler(void)
 		LL_DMA_ClearFlag_TC7(DMA2);
 		/* Call function Transmission complete Callback */
 		LL_DMA_DisableStream(DMA2, LL_DMA_STREAM_7);
-		dir1_tmr = 2;
+		dir1_tmr = baud_dir1;
 	}
 	if(LL_DMA_IsActiveFlag_TE7(DMA2))
 	{

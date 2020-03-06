@@ -72,6 +72,19 @@ uint8_t ip_addr[4] = {0};
 uint8_t ip_mask[4] = {0};
 uint8_t ip_gate[4] = {0};
 
+uint16_t rs485_conf1 = 0x1002;
+uint16_t rs485_conf2 = 0x1002;
+
+uint8_t baudrate1=2;
+uint8_t stop_bits1=1;
+uint8_t parity1=0;
+uint8_t baud_dir1 = 3;
+
+uint8_t baudrate2=2;
+uint8_t stop_bits2=1;
+uint8_t parity2=0;
+uint8_t baud_dir2 = 3;
+
 extern uint8_t net_address;
 
 /* USER CODE END PV */
@@ -143,6 +156,8 @@ int main(void)
   	  EE_WriteVariable(VirtAddVarTab[7],0xC0A8);	// IP gate
   	  EE_WriteVariable(VirtAddVarTab[8],0x0101);
   	  EE_WriteVariable(VirtAddVarTab[9],0xFFFF);	// ai_type
+  	  EE_WriteVariable(VirtAddVarTab[10],0x1002);	// rs485_conf1
+  	  EE_WriteVariable(VirtAddVarTab[11],0x1002);	// rs485_conf2
   	  EE_WriteVariable(VirtAddVarTab[15],CONFIG_KEY_VALUE);
   }
 
@@ -167,6 +182,35 @@ int main(void)
   ip_gate[2] = ee_key>>8;
   ip_gate[3] = ee_key&0xFF;
   EE_ReadVariable(VirtAddVarTab[9],  &ai_type);
+  EE_ReadVariable(VirtAddVarTab[10],  &rs485_conf1);
+  EE_ReadVariable(VirtAddVarTab[11],  &rs485_conf2);
+
+  baudrate1 = rs485_conf1 & 0xFF;
+    baudrate2 = rs485_conf2 & 0xFF;
+    parity1 = rs485_conf1 >> 12;
+    parity2 = rs485_conf2 >> 12;
+    stop_bits1 = (rs485_conf1 >> 8) & 0x0F;
+    stop_bits2 = (rs485_conf2 >> 8) & 0x0F;
+
+    switch(baudrate1) {
+		case 0:baud_dir1 = 10;break;
+		case 1:baud_dir1 = 6;break;
+		case 2:baud_dir1 = 3;break;
+		case 3:baud_dir1 = 2;break;
+		case 4:baud_dir1 = 2;break;
+		case 5:baud_dir1 = 2;break;
+		case 6:baud_dir1 = 1;break;
+    }
+
+    switch(baudrate2) {
+		case 0:baud_dir2 = 10;break;
+		case 1:baud_dir2 = 6;break;
+		case 2:baud_dir2 = 3;break;
+		case 3:baud_dir2 = 2;break;
+		case 4:baud_dir2 = 2;break;
+		case 5:baud_dir2 = 2;break;
+		case 6:baud_dir2 = 1;break;
+   }
 
   /* USER CODE END SysInit */
 
