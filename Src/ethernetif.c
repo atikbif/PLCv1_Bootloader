@@ -254,7 +254,10 @@ static void low_level_init(struct netif *netif)
 
    uint8_t MACAddr[6] ;
   heth.Instance = ETH;
-  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  //heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
+  heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_DISABLE;
+  heth.Init.Speed = ETH_SPEED_100M;
+  heth.Init.DuplexMode = ETH_MODE_FULLDUPLEX;
   heth.Init.PhyAddress = DP83848_PHY_ADDRESS;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
@@ -547,10 +550,11 @@ void ethernetif_input(void const * argument)
 {
   struct pbuf *p;
   struct netif *netif = (struct netif *) argument;
+  uint32_t regvalue = 0;
   
   for( ;; )
   {
-    if (osSemaphoreWait(s_xSemaphore, TIME_WAITING_FOR_INPUT) == osOK)
+    if (osSemaphoreWait(s_xSemaphore, 1000) == osOK)
     {
       do
       {   
@@ -563,6 +567,24 @@ void ethernetif_input(void const * argument)
           }
         }
       } while(p!=NULL);
+    }else {
+    	if (HAL_ETH_ReadPHYRegister(&heth, PHY_BSR, &regvalue) == HAL_OK) {
+    		if((regvalue & PHY_LINKED_STATUS)== (uint16_t)RESET) {
+    			// Link status = disconnected
+			   if (netif_is_link_up(netif)) {
+				   netif_set_down(netif);
+				   netif_set_link_down(netif);
+				   //HAL_GPIO_TogglePin(LED_G_GPIO_Port,LED_G_Pin);
+			   }
+    		}else {
+    			if (!netif_is_link_up(netif)) {
+    				netif_set_up(netif);
+    				netif_set_link_up(netif);
+    				//HAL_GPIO_TogglePin(LED_G_GPIO_Port,LED_G_Pin);
+    			}
+    		}
+    	}
+
     }
   }
 }
